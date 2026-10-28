@@ -22,4 +22,35 @@ for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
   cp public/pwa-192x192.png "$dir/ic_launcher_foreground.png"
 done
 rm -rf "$RES"/mipmap-anydpi-v26
+
+# Keep the app out of the status bar / camera cutout / nav bar area
+JAVA_DIR=android/app/src/main/java/com/sabbogota/idiger
+mkdir -p "$JAVA_DIR"
+cat > "$JAVA_DIR/MainActivity.java" <<'JAVA'
+package com.sabbogota.idiger;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final View content = findViewById(android.R.id.content);
+        content.getRootView().setBackgroundColor(Color.parseColor("#0F2E5A"));
+        ViewCompat.setOnApplyWindowInsetsListener(content, (v, windowInsets) -> {
+            Insets i = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(i.left, i.top, i.right, i.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(content);
+    }
+}
+JAVA
 echo "Android project ready in ./android"
