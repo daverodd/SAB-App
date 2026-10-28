@@ -1,0 +1,24 @@
+<kml xmlns="http://earth.google.com/kml/2.2">
+ <Folder>
+  <name>1399BOG-Intensity (Horizontal)-Sat Oct 17 22:11:18 2026 GMT</name>
+  <ExtendedData xmlns:edge="http://eecradar.com">
+   <edge:Moment>Intensity (Horizontal)</edge:Moment>
+   <edge:MomentAbbreviation>ZH</edge:MomentAbbreviation>
+  </ExtendedData>
+  <lookAt>
+   <longitude>-74.11397552490234</longitude>
+   <latitude>4.675168991088867</latitude>
+  </lookAt>
+  <GroundOverlay>
+   <Icon>
+    <href>1399BOG_ZH_1792275078_1792275141.png</href>
+   </Icon>
+   <LatLonBox>
+    <north>5.217750127612162</north>
+    <south>4.132579471620416</south>
+    <east>-73.57319917717719</east>
+    <west>-74.65475187262749</west>
+   </LatLonBox>
+  </GroundOverlay>
+ </Folder>
+</kml>
