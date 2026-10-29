@@ -44,12 +44,13 @@ final class WeatherStatus {
         String humText = hum != null
             ? String.format(Locale.US, "%d %%", Math.round(hum.optDouble("VALORLECTURA"))) : "-- %";
 
-        StringBuilder detail = new StringBuilder();
-        if (temp != null) detail.append("Temp: ").append(temp.optString("ESTACION", "")).append(" (").append(temp.optString("LOCALIDAD", "")).append(")");
-        if (hum != null) {
-            if (detail.length() > 0) detail.append("\n");
-            detail.append("Humedad: ").append(hum.optString("ESTACION", "")).append(" (").append(hum.optString("LOCALIDAD", "")).append(")");
-        }
+        String tLoc = temp != null ? prettyLocalidad(temp.optString("LOCALIDAD", "")) : "";
+        String hLoc = hum != null ? prettyLocalidad(hum.optString("LOCALIDAD", "")) : "";
+        String place;
+        if (tLoc.isEmpty()) place = hLoc;
+        else if (hLoc.isEmpty() || hLoc.equals(tLoc)) place = tLoc;
+        else place = "Temp: " + tLoc + "  |  Humedad: " + hLoc;
+        final String detailText = place;
 
         Intent open = ctx.getPackageManager().getLaunchIntentForPackage(ctx.getPackageName());
         PendingIntent pi = PendingIntent.getActivity(
@@ -60,8 +61,7 @@ final class WeatherStatus {
             .setSmallIcon(icon != 0 ? icon : android.R.drawable.ic_dialog_info)
             .setColor(0xFFDF8B35)
             .setContentTitle(tempText + "  •  Humedad " + humText)
-            .setContentText(detail.toString().replace("\n", "  |  "))
-            .setStyle(new NotificationCompat.BigTextStyle().bigText(detail.toString()))
+            .setContentText(detailText)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setShowWhen(true)
@@ -74,6 +74,34 @@ final class WeatherStatus {
         } catch (SecurityException ignored) {
             // Notification permission not granted.
         }
+    }
+
+
+    private static final String[] LOCALIDADES = {
+        "Usaquén", "Chapinero", "Santa Fe", "San Cristóbal", "Usme", "Tunjuelito", "Bosa",
+        "Kennedy", "Fontibón", "Engativá", "Suba", "Barrios Unidos", "Teusaquillo",
+        "Los Mártires", "Antonio Nariño", "Puente Aranda", "La Candelaria",
+        "Rafael Uribe Uribe", "Ciudad Bolívar", "Sumapaz"
+    };
+
+    /** "ENGATIVA" -> "Engativá" (restores accents for the 20 Bogotá localidades). */
+    private static String prettyLocalidad(String raw) {
+        String key = stripAccents(raw).trim().toLowerCase(Locale.ROOT);
+        if (key.isEmpty()) return "";
+        for (String name : LOCALIDADES) {
+            if (stripAccents(name).toLowerCase(Locale.ROOT).equals(key)) return name;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String w : key.split("\\s+")) {
+            if (w.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(' ');
+            sb.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1));
+        }
+        return sb.toString();
+    }
+
+    private static String stripAccents(String s) {
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
     }
 
     private static JSONObject nearestWithReading(String url, double lat, double lng) throws Exception {
