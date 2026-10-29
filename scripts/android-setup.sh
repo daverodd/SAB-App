@@ -16,7 +16,7 @@ grep -q 'screenOrientation' "$MANIFEST" || sed -i 's#<activity#<activity android
 
 # Launcher icons: pre-rendered set in assets/android-icons (adaptive XML dropped so icons are used as-is)
 RES=android/app/src/main/res
-cp -r assets/android-icons/. "$RES"/
+if [ -d assets/android-icons ]; then cp -r assets/android-icons/. "$RES"/; else echo "No custom icons found, using defaults"; fi
 rm -rf "$RES"/mipmap-anydpi-v26
 
 # Native code: safe-area padding (camera cutout) + background rain alerts
