@@ -31,4 +31,11 @@ grep -q "androidx.work:work-runtime" "$GRADLE" || \
   sed -i '0,/^dependencies {/s//dependencies {\n    implementation "androidx.work:work-runtime:2.10.0"/' "$GRADLE"
 grep -q "androidx.work:work-runtime" "$GRADLE" || { echo "Could not add WorkManager dependency"; exit 1; }
 
+# Fixed signing key in CI so every build is signed the same way and can update the installed app.
+# (CI runners otherwise generate a new random debug key each run -> "package conflict" on update.)
+if [ "${CI:-}" = "true" ] && [ -f assets/signing/debug.keystore ]; then
+  mkdir -p "$HOME/.android"
+  cp assets/signing/debug.keystore "$HOME/.android/debug.keystore"
+fi
+
 echo "Android project ready in ./android"
