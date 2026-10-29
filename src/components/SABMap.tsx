@@ -410,6 +410,7 @@ export const SABMap: React.FC<SABMapProps> = ({
       center: [initialLat, initialLng],
       zoom: initialZoom,
       zoomControl: false,
+      attributionControl: false,
       minZoom: 9,
       maxZoom: 18,
     });
