@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* Leaflet Dark Theme & Custom Popup Styling */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  background-color: #11141e !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(223, 139, 53, 0.15) !important;
+  border: 1px solid #2b231b !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: inherit !important;
+}
+
+.leaflet-popup-tip {
+  background-color: #11141e !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: #8b97a8 !important;
+  padding: 6px 8px 0 0 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #f8fafc !important;
+}
+
+.leaflet-container {
+  background-color: #0c0f17 !important;
+  font-family: inherit !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Dark Zoom Controls */
+.leaflet-bar {
+  border: 1px solid #252c3c !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-bar a {
+  background-color: #151922 !important;
+  color: #cbd5e1 !important;
+  border-bottom: 1px solid #252c3c !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.leaflet-bar a:hover {
+  background-color: #202738 !important;
+  color: #df8b35 !important;
+}
+
+/* Original Esri Dark Theme Tiles */
+.dark-tiles,
+.dark-tiles .leaflet-tile,
+img.dark-tiles,
+.leaflet-tile-pane img.dark-tiles {
+  filter: brightness(0.95) contrast(1.05) !important;
+}
+
+/* Labels layer: clean crisp labels */
+.labels-tiles,
+.labels-tiles .leaflet-tile,
+img.labels-tiles {
+  filter: contrast(1.1) brightness(1.0) !important;
+}
+
+/* Minimalist Light Canvas */
+.map-tiles-light-minimal .leaflet-tile,
+.leaflet-tile-pane.map-tiles-light-minimal img,
+img.map-tiles-light-minimal {
+  filter: contrast(1.05) saturate(0.85) brightness(1.02) !important;
+}
+
+.leaflet-bar a.leaflet-disabled {
+  background-color: #0f121a !important;
+  color: #475569 !important;
+}
+
+/* Dark Attribution Bar */
+.leaflet-control-attribution {
+  background-color: rgba(12, 15, 23, 0.88) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #64748b !important;
+  border-top-left-radius: 6px !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  border-top: 1px solid #252c3c !important;
+  border-left: 1px solid #252c3c !important;
+}
+
+.leaflet-control-attribution a {
+  color: #b4753c !important;
+}
+
+/* Permanent Clean Locality Text on Map (no box) */
+.sab-locality-permanent-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+.sab-locality-permanent-label:before {
+  display: none !important;
+}
+
+/* Locality Dark Tooltip */
+.sab-locality-tooltip {
+  background: rgba(17, 20, 30, 0.94) !important;
+  backdrop-filter: blur(6px) !important;
+  color: #f8fafc !important;
+  border: 1px solid #362c22 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7) !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+}
+
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before,
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before {
+  border-color: transparent !important;
+}
+
+/* Eliminate black box focus ring when clicking anywhere on the map */
+.leaflet-container:focus,
+.leaflet-container *:focus,
+.leaflet-container:focus-visible,
+.leaflet-container *:focus-visible,
+div[tabindex]:focus,
+div[tabindex]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth anti-aliased Doppler radar contours */
+.sab-radar-overlay {
+  image-rendering: auto !important;
+  filter: contrast(1.06) saturate(1.12) !important;
+  will-change: opacity, transform;
+  pointer-events: none !important;
+}
+
+.sab-radar-animated-tile {
+  image-rendering: auto !important;
+  filter: contrast(1.08) saturate(1.15) !important;
+  pointer-events: none !important;
+}
+
+/* Blinking animation for raining stations: exact same shape, same size, just blinking */
+@keyframes triangleBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.animate-blink,
+.animate-subtle-bounce,
+.animate-jumpy {
+  animation: triangleBlink 1s ease-in-out infinite;
+  display: inline-flex;
+}
+
+

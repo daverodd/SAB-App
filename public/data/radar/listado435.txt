@@ -1,0 +1,12 @@
+./datos/radar_images/Transparente/Transparent_435_202610272220.png
+./datos/radar_images/Transparente/Transparent_435_202610272223.png
+./datos/radar_images/Transparente/Transparent_435_202610272226.png
+./datos/radar_images/Transparente/Transparent_435_202610272230.png
+./datos/radar_images/Transparente/Transparent_435_202610272232.png
+./datos/radar_images/Transparente/Transparent_435_202610272235.png
+./datos/radar_images/Transparente/Transparent_435_202610272238.png
+./datos/radar_images/Transparente/Transparent_435_202610272241.png
+./datos/radar_images/Transparente/Transparent_435_202610272244.png
+./datos/radar_images/Transparente/Transparent_435_202610272247.png
+./datos/radar_images/Transparente/Transparent_435_202610272250.png
+./datos/radar_images/Transparente/Transparent_435_202610272253.png
