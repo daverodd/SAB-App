@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Capacitor, registerPlugin } from '@capacitor/core';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { ensureNotificationPermission } from '../services/notifications';
 
 interface RainAlertsPlugin {
   setLocation(options: { lat: number; lng: number }): Promise<void>;
@@ -26,7 +26,7 @@ export function useRainAlert(userLocation: { lat: number; lng: number } | null) 
     if (!Capacitor.isNativePlatform()) return;
     (async () => {
       try {
-        await LocalNotifications.requestPermissions();
+        await ensureNotificationPermission();
         await RainAlerts.start();
       } catch (e) {
         console.warn('Rain alerts setup failed', e);

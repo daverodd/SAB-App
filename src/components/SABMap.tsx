@@ -20,6 +20,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { Station, SensorTypeId } from '../types/sab';
+import { ensureNotificationPermission } from '../services/notifications';
 import { fetchRadarFrames, BUNDLED_RADAR_URL, type RadarFrame } from '../services/radarApi';
 import {
   classifyRainfall,
@@ -447,7 +448,8 @@ export const SABMap: React.FC<SABMapProps> = ({
     mapInstanceRef.current = map;
 
     // Automatically activate GPS detection by default (without zooming in)
-    handleGetLocation(false);
+    // Ask for notification permission first, then GPS (Android shows one permission dialog at a time)
+    ensureNotificationPermission().then(() => handleGetLocation(false));
 
     return () => {
       if (tileLayerRef.current) {
