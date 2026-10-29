@@ -30,43 +30,56 @@ final class RainChecker {
     private RainChecker() {}
 
     static synchronized void check(Context ctx) {
+        SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String latS = p.getString("lat", null);
+        String lngS = p.getString("lng", null);
+        if (latS == null || lngS == null) return;
+        double lat;
+        double lng;
         try {
-            SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-            String latS = p.getString("lat", null);
-            String lngS = p.getString("lng", null);
-            if (latS == null || lngS == null) return;
-            double lat = Double.parseDouble(latS);
-            double lng = Double.parseDouble(lngS);
-
-            JSONArray arr = new JSONObject(httpGet(SAB_URL)).getJSONArray("TipoSensores");
-            JSONObject nearest = null;
-            double best = Double.MAX_VALUE;
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject s = arr.getJSONObject(i);
-                double sLat = s.optDouble("LATITUD", 0);
-                double sLng = s.optDouble("LONGITUD", 0);
-                if (Double.isNaN(sLat) || Double.isNaN(sLng) || (sLat == 0 && sLng == 0)) continue;
-                double d = distance(lat, lng, sLat, sLng);
-                if (d < best) {
-                    best = d;
-                    nearest = s;
-                }
-            }
-            if (nearest == null) return;
-
-            int id = nearest.optInt("IDSENSOR", -1);
-            String status = statusFor(nearest);
-            int prevId = p.getInt("last_id", -1);
-            String prevStatus = p.getString("last_status", null);
-            p.edit().putInt("last_id", id).putString("last_status", status).apply();
-
-            // First reading, or the nearest station changed: just remember it.
-            if (prevStatus == null || prevId != id) return;
-            if (!status.equals(prevStatus) && !status.equals(NO_RAIN)) {
-                notifyUser(ctx, status, nearest);
-            }
+            lat = Double.parseDouble(latS);
+            lng = Double.parseDouble(lngS);
+        } catch (NumberFormatException e) {
+            return;
+        }
+        try {
+            checkRain(ctx, p, lat, lng);
         } catch (Exception ignored) {
             // Network or parsing problem: try again on the next run.
+        }
+        try {
+            WeatherStatus.update(ctx, lat, lng);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static void checkRain(Context ctx, SharedPreferences p, double lat, double lng) throws Exception {
+        JSONArray arr = new JSONObject(httpGet(SAB_URL)).getJSONArray("TipoSensores");
+        JSONObject nearest = null;
+        double best = Double.MAX_VALUE;
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject s = arr.getJSONObject(i);
+            double sLat = s.optDouble("LATITUD", 0);
+            double sLng = s.optDouble("LONGITUD", 0);
+            if (Double.isNaN(sLat) || Double.isNaN(sLng) || (sLat == 0 && sLng == 0)) continue;
+            double d = distance(lat, lng, sLat, sLng);
+            if (d < best) {
+                best = d;
+                nearest = s;
+            }
+        }
+        if (nearest == null) return;
+
+        int id = nearest.optInt("IDSENSOR", -1);
+        String status = statusFor(nearest);
+        int prevId = p.getInt("last_id", -1);
+        String prevStatus = p.getString("last_status", null);
+        p.edit().putInt("last_id", id).putString("last_status", status).apply();
+
+        // First reading, or the nearest station changed: just remember it.
+        if (prevStatus == null || prevId != id) return;
+        if (!status.equals(prevStatus) && !status.equals(NO_RAIN)) {
+            notifyUser(ctx, status, nearest);
         }
     }
 
@@ -115,7 +128,7 @@ final class RainChecker {
         }
     }
 
-    private static String httpGet(String url) throws Exception {
+    static String httpGet(String url) throws Exception {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
         c.setConnectTimeout(10000);
         c.setReadTimeout(15000);
@@ -131,7 +144,7 @@ final class RainChecker {
         }
     }
 
-    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+    static double distance(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371000;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
