@@ -526,10 +526,10 @@ export const SABMap: React.FC<SABMapProps> = ({
 
       const geoLayer = L.geoJSON(localidadesGeoJson, {
         style: {
-          color: isDark ? '#38bdf8' : '#0284c7',
+          color: isDark ? '#df8b35' : '#c57220',
           weight: 1.5,
           opacity: 0.75,
-          fillColor: isDark ? '#38bdf8' : '#0284c7',
+          fillColor: isDark ? '#df8b35' : '#c57220',
           fillOpacity: 0.02,
           dashArray: '4, 4',
         },
