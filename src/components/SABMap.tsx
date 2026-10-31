@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Station, SensorTypeId } from '../types/sab';
 import { ensureNotificationPermission } from '../services/notifications';
+import { diagnoseNotifications } from '../services/rainAlerts';
 import { fetchRadarFrames, BUNDLED_RADAR_URL, type RadarFrame } from '../services/radarApi';
 import {
   classifyRainfall,
@@ -1013,6 +1014,18 @@ export const SABMap: React.FC<SABMapProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Notification diagnostics */}
+            <button
+              type="button"
+              onClick={async () => {
+                const report = await diagnoseNotifications();
+                window.alert(report);
+              }}
+              className="w-full pt-2 border-t border-[#252c3c] text-left text-[11px] font-medium text-[#8a9bb2] hover:text-white cursor-pointer"
+            >
+              Probar notificaciones
+            </button>
           </div>
         )}
       </div>

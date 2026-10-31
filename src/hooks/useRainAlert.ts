@@ -1,15 +1,7 @@
 import { useEffect } from 'react';
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { ensureNotificationPermission } from '../services/notifications';
-
-interface RainAlertsPlugin {
-  setLocation(options: { lat: number; lng: number }): Promise<void>;
-  start(): Promise<void>;
-  checkNow(): Promise<void>;
-}
-
-// Native Android plugin (assets/android-native/RainAlertsPlugin.java)
-const RainAlerts = registerPlugin<RainAlertsPlugin>('RainAlerts');
+import { RainAlerts } from '../services/rainAlerts';
 
 const FOREGROUND_CHECK_MS = 60000;
 

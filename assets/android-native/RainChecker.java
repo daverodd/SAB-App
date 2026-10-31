@@ -42,15 +42,24 @@ final class RainChecker {
         } catch (NumberFormatException e) {
             return;
         }
+        String rainResult = "ok";
         try {
             checkRain(ctx, p, lat, lng);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             // Network or parsing problem: try again on the next run.
+            rainResult = "error: " + e;
         }
+        String weatherResult;
         try {
-            WeatherStatus.update(ctx, lat, lng);
-        } catch (Exception ignored) {
+            weatherResult = WeatherStatus.update(ctx, lat, lng);
+        } catch (Exception e) {
+            weatherResult = "error: " + e;
         }
+        p.edit()
+            .putLong("dbg_time", System.currentTimeMillis())
+            .putString("dbg_rain", rainResult)
+            .putString("dbg_weather", weatherResult)
+            .apply();
     }
 
     private static void checkRain(Context ctx, SharedPreferences p, double lat, double lng) throws Exception {

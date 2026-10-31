@@ -6,6 +6,9 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import android.content.SharedPreferences;
+import androidx.core.app.NotificationManagerCompat;
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -54,6 +57,24 @@ public class RainAlertsPlugin extends Plugin {
         new Thread(() -> {
             RainChecker.check(ctx);
             call.resolve();
+        }).start();
+    }
+
+    /** Runs a check now and reports what happened (for the "Probar notificaciones" button). */
+    @PluginMethod
+    public void diagnose(PluginCall call) {
+        final Context ctx = getContext();
+        new Thread(() -> {
+            RainChecker.check(ctx);
+            SharedPreferences p = ctx.getSharedPreferences(RainChecker.PREFS, Context.MODE_PRIVATE);
+            JSObject o = new JSObject();
+            o.put("notificationsEnabled", NotificationManagerCompat.from(ctx).areNotificationsEnabled());
+            o.put("lat", p.getString("lat", "none"));
+            o.put("lng", p.getString("lng", "none"));
+            o.put("time", p.getLong("dbg_time", 0));
+            o.put("rain", p.getString("dbg_rain", "never ran (no location saved?)"));
+            o.put("weather", p.getString("dbg_weather", "never ran (no location saved?)"));
+            call.resolve(o);
         }).start();
     }
 }

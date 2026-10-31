@@ -23,13 +23,13 @@ final class WeatherStatus {
 
     private WeatherStatus() {}
 
-    static void update(Context ctx, double lat, double lng) throws Exception {
+    static String update(Context ctx, double lat, double lng) throws Exception {
         JSONObject temp = nearestWithReading(URL_BASE + "1", lat, lng);
         JSONObject hum = nearestWithReading(URL_BASE + "2", lat, lng);
-        if (temp == null && hum == null) return; // keep whatever is showing
+        if (temp == null && hum == null) return "no station data (temp and humidity both empty)"; // keep whatever is showing
 
         NotificationManagerCompat nm = NotificationManagerCompat.from(ctx);
-        if (!nm.areNotificationsEnabled()) return;
+        if (!nm.areNotificationsEnabled()) return "notifications are disabled in Android settings";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel ch = new NotificationChannel(
@@ -71,9 +71,10 @@ final class WeatherStatus {
             .setContentIntent(pi);
         try {
             nm.notify(NOTIFICATION_ID, b.build());
-        } catch (SecurityException ignored) {
-            // Notification permission not granted.
+        } catch (SecurityException e) {
+            return "SecurityException: notification permission not granted";
         }
+        return "posted: " + tempText + " / " + humText + " / " + place;
     }
 
 
