@@ -52,5 +52,6 @@ export function useRainAlert(userLocation: { lat: number; lng: number } | null) 
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [userLocation?.lat, userLocation?.lng]);
+  // Rounded to ~11 m so small GPS jitter doesn't restart the checks
+  }, [userLocation ? userLocation.lat.toFixed(4) : null, userLocation ? userLocation.lng.toFixed(4) : null]);
 }

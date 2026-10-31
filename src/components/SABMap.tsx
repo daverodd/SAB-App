@@ -226,7 +226,7 @@ export const SABMap: React.FC<SABMapProps> = ({
   }, []);
 
   // Get current user GPS location and pinpoint on map
-  const handleGetLocation = useCallback((shouldCenterAndZoom: boolean = false) => {
+  const handleGetLocation = useCallback((shouldCenterAndZoom: boolean = false, silent: boolean = false) => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       setLocationError('Tu dispositivo o navegador no soporta geolocalización GPS.');
       setTimeout(() => setLocationError(null), 5000);
@@ -236,8 +236,10 @@ export const SABMap: React.FC<SABMapProps> = ({
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    setLocatingState(true);
-    setLocationError(null);
+    if (!silent) {
+      setLocatingState(true);
+      setLocationError(null);
+    }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -264,6 +266,14 @@ export const SABMap: React.FC<SABMapProps> = ({
           setLocatingState(false);
           setHasLocation(true);
           onLocationChangeRef.current?.({ lat: latitude, lng: longitude });
+
+          // Silent background refresh: just move the existing marker (keeps popups open)
+          if (silent && userMarkerRef.current && userCircleRef.current) {
+            userMarkerRef.current.setLatLng([latitude, longitude]);
+            userCircleRef.current.setLatLng([latitude, longitude]);
+            userCircleRef.current.setRadius(accuracy);
+            return;
+          }
 
           // Safe clean up of previous user location layers
           try {
@@ -381,6 +391,7 @@ export const SABMap: React.FC<SABMapProps> = ({
       },
       (err) => {
         setLocatingState(false);
+        if (silent) return;
         let msg = 'No se pudo obtener tu ubicación GPS.';
         if (err.code === err.PERMISSION_DENIED) {
           msg = 'Permiso denegado. Habilita el permiso de ubicación en tu navegador.';
@@ -472,6 +483,20 @@ export const SABMap: React.FC<SABMapProps> = ({
       mapInstanceRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Refresh the GPS position every 30 s while the app is on screen
+  const handleGetLocationRef = useRef(handleGetLocation);
+  useEffect(() => {
+    handleGetLocationRef.current = handleGetLocation;
+  }, [handleGetLocation]);
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        handleGetLocationRef.current(false, true);
+      }
+    }, 30000);
+    return () => clearInterval(id);
   }, []);
 
   // Handle external GPS trigger (e.g. from Header badge)
