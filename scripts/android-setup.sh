@@ -12,6 +12,10 @@ add_perm() { grep -q "$1" "$MANIFEST" || sed -i "s#<application#<uses-permission
 add_perm android.permission.ACCESS_FINE_LOCATION
 add_perm android.permission.ACCESS_COARSE_LOCATION
 add_perm android.permission.POST_NOTIFICATIONS
+add_perm android.permission.USE_EXACT_ALARM
+add_perm android.permission.RECEIVE_BOOT_COMPLETED
+# 5-minute refresh of the temperature/humidity notification (RainAlarm.java)
+grep -q 'RainAlarm' "$MANIFEST" || sed -i 's#</application>#    <receiver android:name=".RainAlarm" android:exported="false">\n            <intent-filter>\n                <action android:name="android.intent.action.BOOT_COMPLETED" />\n                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />\n            </intent-filter>\n        </receiver>\n    </application>#' "$MANIFEST"
 grep -q 'screenOrientation' "$MANIFEST" || sed -i 's#<activity#<activity android:screenOrientation="portrait"#' "$MANIFEST"
 
 # Launcher icons: pre-rendered set in assets/android-icons (adaptive XML dropped so icons are used as-is)

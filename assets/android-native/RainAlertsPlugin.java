@@ -47,6 +47,7 @@ public class RainAlertsPlugin extends Plugin {
             .build();
         WorkManager.getInstance(getContext())
             .enqueueUniquePeriodicWork("rain-alerts", ExistingPeriodicWorkPolicy.KEEP, request);
+        RainAlarm.schedule(getContext()); // every 5 minutes on top of the 15-minute job
         call.resolve();
     }
 
@@ -56,6 +57,7 @@ public class RainAlertsPlugin extends Plugin {
         final Context ctx = getContext();
         new Thread(() -> {
             RainChecker.check(ctx);
+            RainAlarm.schedule(ctx);
             call.resolve();
         }).start();
     }
