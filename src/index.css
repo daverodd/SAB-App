@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+/* Carbon+ everywhere (bundled, works offline). Only Regular and Bold exist, so lighter weights use Regular
+   and semibold/bold/extrabold use Bold. */
+@font-face {
+  font-family: "Carbon Plus";
+  src: url("/fonts/carbonplus.otf") format("opentype");
+  font-weight: 100 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Carbon Plus";
+  src: url("/fonts/carbonplus-bold.otf") format("opentype");
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Carbon Plus", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Carbon Plus", ui-monospace, monospace;
+}
+
+html, body, button, input, select, textarea {
+  font-family: var(--font-sans);
+}
+
 /* Leaflet Dark Theme & Custom Popup Styling */
 .leaflet-popup-content-wrapper {
   padding: 0 !important;
